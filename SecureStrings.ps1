@@ -36,8 +36,6 @@ this functionality if you want to mimic ConvertTo-SecureString in C#. This imple
 sin that you should be aware of. ConvertTo-SecureString and ConvertFrom-SecureString put the unencrypted string 
 into the manged heap (in the form of an array). As if someone could execute some unmanaged code whilst the PowerShell 
 process is running and poke around the memory they could find the string in its clear text form.
-
-
 #>
 
 $Key = (3,4,2,3,56,34,254,222,1,1,2,23,42,54,33,233,1,34,2,7,6,5,35,43)
@@ -46,3 +44,11 @@ $EncryptedString = '76492d1116743f0423413b16050a5345MgB8AHIANgBkAFAAWAArAFAAVAA3
 $SecureStringObject = $EncryptedString | ConvertTo-SecureString -Key $Key
 $Ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($SecureStringObject)
 [System.Runtime.InteropServices.Marshal]::PtrToStringUni($Ptr)
+
+<#
+.DESCRIPTION
+Creating a PSCredential from a inline plain text password
+#>
+
+$SecureString = ConvertTo-SecureString -String 'Password' -AsPlainText -Force
+$PSCredentialObject = New-Object -TypeName System.Management.Automation.PSCredential('Domain\UserName', $SecureString) 
